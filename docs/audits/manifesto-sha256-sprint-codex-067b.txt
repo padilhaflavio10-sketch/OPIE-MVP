@@ -1,0 +1,13 @@
+# SPRINT-CODEX-067B — Manifesto SHA-256
+# O manifesto relaciona os nove documentos-fonte publicados.
+# O próprio manifesto não é incluído para evitar autorreferência circular.
+
+037b2c1b4f21ecb628f17730d8d7f5ece2b09560342c7018d3ea652f46b332af  docs/audits/relatorio-sprint-work-067.md
+178fc753d3dfd294deea440cd2383803a6405a3afb51a51899d0a828c2e30519  docs/functional/baseline-funcional-v1.0-bloco-10.md
+771fd86f91409834ad28e47be44136fbda54816c9fcb33ceb01b5e226f2e0bcd  docs/functional/bloco-03-cadastros.md
+b88c1795823c8c64425e4282a0e91de25190bae7f48b49e69df75e76eada9656  docs/functional/bloco-04-estoque.md
+51592ef65a5c2418f0bc41c17bc377ee6ab3a31e4a4d71db17b3d2e869a85689  docs/functional/bloco-05-producao.md
+8d84c9fb17e8a09ce9910404bb8a07a09dcb75c1eb6d8b56d6edfb4a9331147f  docs/functional/bloco-06-pedidos-vendas-entregas.md
+fd62619bfa38641771dc8684ae9c234a640ae6980509dd2ab8d9cc691456bfe7  docs/functional/bloco-07-navegacao-experiencia.md
+181f73b395d1bc16a8258e0153f3d6f40a2d4fdf8f891bc212e037b90c95d4a9  docs/functional/bloco-08-dashboard-relatorios.md
+470371aa0205b93a24ff2fb90bfe0f90d10eafdfd312356d09c7a1a4d8d96d6d  docs/functional/bloco-09-seguranca-historico-auditoria.md
