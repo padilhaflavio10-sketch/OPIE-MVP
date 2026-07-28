@@ -83,7 +83,7 @@ jobs:
             throw "cargo inesperado: $cargoVersion"
           }
       - name: Cache Cargo
-        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2.9.1
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # changelog 2.9.1, commit de 2026-03-12
         with:
           workspaces: src-tauri
       - name: Check Rust backend
@@ -92,6 +92,22 @@ jobs:
       - name: Test Rust backend
         working-directory: src-tauri
         run: cargo test --locked
+      - name: Audit production sources
+        shell: powershell
+        run: |
+          $forbidden = @(
+            'confirm_health_check_e2e',
+            'OPIE_E2E_HEALTH_MARKER',
+            'fs::write',
+            'app.exit('
+          )
+          $productionFiles = Get-ChildItem src, src-tauri/src -Recurse -File
+          foreach ($term in $forbidden) {
+            $matches = $productionFiles | Select-String -SimpleMatch $term
+            if ($matches) {
+              throw "Termo proibido encontrado no código de produção: $term"
+            }
+          }
 
   windows-bundle:
     name: Windows bundle
@@ -131,7 +147,7 @@ jobs:
             throw "cargo inesperado: $cargoVersion"
           }
       - name: Cache Cargo
-        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2.9.1
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # changelog 2.9.1, commit de 2026-03-12
         with:
           workspaces: src-tauri
       - name: Install dependencies
@@ -142,9 +158,6 @@ jobs:
         shell: powershell
         run: |
           $executable = Join-Path $PWD 'src-tauri\target\release\opie-mvp.exe'
-          $healthMarker = Join-Path $env:RUNNER_TEMP 'opie-health-check-e2e.txt'
-          Remove-Item -LiteralPath $healthMarker -ErrorAction SilentlyContinue
-          $env:OPIE_E2E_HEALTH_MARKER = $healthMarker
           $appProcess = Start-Process -FilePath $executable -PassThru
           try {
             foreach ($attempt in 1..30) {
@@ -163,21 +176,73 @@ jobs:
             if ($appProcess.MainWindowTitle -ne 'OPIE MVP') {
               throw "Título inesperado: $($appProcess.MainWindowTitle)"
             }
-            if (-not $appProcess.WaitForExit(30000)) {
-              throw "A aplicação não encerrou normalmente após o health check ponta a ponta."
+
+            Add-Type -AssemblyName UIAutomationClient
+            Add-Type -AssemblyName UIAutomationTypes
+            $window = [System.Windows.Automation.AutomationElement]::FromHandle(
+              $appProcess.MainWindowHandle
+            )
+            $buttonCondition = [System.Windows.Automation.PropertyCondition]::new(
+              [System.Windows.Automation.AutomationElement]::NameProperty,
+              'Verificar núcleo'
+            )
+            $button = $window.FindFirst(
+              [System.Windows.Automation.TreeScope]::Descendants,
+              $buttonCondition
+            )
+            if ($null -eq $button) {
+              throw "O botão de health check não foi encontrado pela automação externa."
             }
-            if ($appProcess.ExitCode -ne 0) {
-              throw "A aplicação encerrou com código $($appProcess.ExitCode)."
+            $invokePattern = $button.GetCurrentPattern(
+              [System.Windows.Automation.InvokePattern]::Pattern
+            )
+            $invokePattern.Invoke()
+
+            $healthCondition = [System.Windows.Automation.PropertyCondition]::new(
+              [System.Windows.Automation.AutomationElement]::NameProperty,
+              'Core OPIE ativo e pronto.'
+            )
+            $healthRendered = $false
+            foreach ($attempt in 1..15) {
+              Start-Sleep -Seconds 1
+              $healthElement = $window.FindFirst(
+                [System.Windows.Automation.TreeScope]::Descendants,
+                $healthCondition
+              )
+              if ($null -ne $healthElement) {
+                $healthRendered = $true
+                break
+              }
             }
-            $healthResult = Get-Content -LiteralPath $healthMarker -Raw
-            if ($healthResult -ne "UI -> invoke('health_check') -> Rust -> Core OPIE ativo e pronto.") {
-              throw "Evidência IPC inesperada: $healthResult"
+            if (-not $healthRendered) {
+              throw "A resposta do health_check não foi renderizada após o clique externo."
+            }
+
+            if (-not $appProcess.CloseMainWindow()) {
+              throw "A janela principal rejeitou a solicitação de fechamento normal."
+            }
+            if (-not $appProcess.WaitForExit(15000)) {
+              throw "A aplicação não encerrou normalmente no prazo esperado."
             }
           } finally {
-            Remove-Item Env:\OPIE_E2E_HEALTH_MARKER -ErrorAction SilentlyContinue
             if (-not $appProcess.HasExited) {
               Stop-Process -Id $appProcess.Id
             }
+          }
+      - name: Verify Windows artifacts individually
+        shell: powershell
+        run: |
+          $exe = 'src-tauri/target/release/opie-mvp.exe'
+          $msi = @(Get-ChildItem 'src-tauri/target/release/bundle/msi/*.msi' -File)
+          $nsis = @(Get-ChildItem 'src-tauri/target/release/bundle/nsis/*-setup.exe' -File)
+          if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) {
+            throw "EXE esperado não encontrado: $exe"
+          }
+          if ($msi.Count -lt 1) {
+            throw "Nenhum MSI foi encontrado."
+          }
+          if ($nsis.Count -lt 1) {
+            throw "Nenhum instalador NSIS foi encontrado."
           }
       - name: Preserve Windows artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
