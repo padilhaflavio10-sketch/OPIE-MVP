@@ -8,17 +8,34 @@ on:
 permissions:
   contents: read
 
+env:
+  NODE_VERSION: '24.18.0'
+  NPM_VERSION: '11.16.0'
+  RUST_VERSION: '1.88.0'
+
 jobs:
   frontend:
     name: Frontend build
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: '24'
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Pin and verify Node.js and npm
+        shell: powershell
+        run: |
+          npm install --global "npm@$env:NPM_VERSION"
+          $nodeVersion = node --version
+          $npmVersion = npm --version
+          if ($nodeVersion -ne "v$env:NODE_VERSION") {
+            throw "Node.js inesperado: $nodeVersion"
+          }
+          if ($npmVersion -ne $env:NPM_VERSION) {
+            throw "npm inesperado: $npmVersion"
+          }
       - name: Install dependencies
         run: npm ci
       - name: Build frontend
@@ -29,21 +46,44 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: '24'
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Pin and verify Node.js and npm
+        shell: powershell
+        run: |
+          npm install --global "npm@$env:NPM_VERSION"
+          $nodeVersion = node --version
+          $npmVersion = npm --version
+          if ($nodeVersion -ne "v$env:NODE_VERSION") {
+            throw "Node.js inesperado: $nodeVersion"
+          }
+          if ($npmVersion -ne $env:NPM_VERSION) {
+            throw "npm inesperado: $npmVersion"
+          }
       - name: Build frontend for Tauri context
         run: |
           npm ci
           npm run build
       - name: Install stable Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # commit 2026-07-16; Rust 1.88.0
         with:
-          toolchain: 1.88.0
+          toolchain: ${{ env.RUST_VERSION }}
+      - name: Verify Rust toolchain
+        shell: powershell
+        run: |
+          $rustcVersion = rustc --version
+          $cargoVersion = cargo --version
+          if (-not $rustcVersion.StartsWith("rustc $env:RUST_VERSION ")) {
+            throw "rustc inesperado: $rustcVersion"
+          }
+          if (-not $cargoVersion.StartsWith("cargo $env:RUST_VERSION ")) {
+            throw "cargo inesperado: $cargoVersion"
+          }
       - name: Cache Cargo
-        uses: Swatinem/rust-cache@v2
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2.9.1
         with:
           workspaces: src-tauri
       - name: Check Rust backend
@@ -58,17 +98,40 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: '24'
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Pin and verify Node.js and npm
+        shell: powershell
+        run: |
+          npm install --global "npm@$env:NPM_VERSION"
+          $nodeVersion = node --version
+          $npmVersion = npm --version
+          if ($nodeVersion -ne "v$env:NODE_VERSION") {
+            throw "Node.js inesperado: $nodeVersion"
+          }
+          if ($npmVersion -ne $env:NPM_VERSION) {
+            throw "npm inesperado: $npmVersion"
+          }
       - name: Install stable Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # commit 2026-07-16; Rust 1.88.0
         with:
-          toolchain: 1.88.0
+          toolchain: ${{ env.RUST_VERSION }}
+      - name: Verify Rust toolchain
+        shell: powershell
+        run: |
+          $rustcVersion = rustc --version
+          $cargoVersion = cargo --version
+          if (-not $rustcVersion.StartsWith("rustc $env:RUST_VERSION ")) {
+            throw "rustc inesperado: $rustcVersion"
+          }
+          if (-not $cargoVersion.StartsWith("cargo $env:RUST_VERSION ")) {
+            throw "cargo inesperado: $cargoVersion"
+          }
       - name: Cache Cargo
-        uses: Swatinem/rust-cache@v2
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2.9.1
         with:
           workspaces: src-tauri
       - name: Install dependencies
@@ -79,6 +142,9 @@ jobs:
         shell: powershell
         run: |
           $executable = Join-Path $PWD 'src-tauri\target\release\opie-mvp.exe'
+          $healthMarker = Join-Path $env:RUNNER_TEMP 'opie-health-check-e2e.txt'
+          Remove-Item -LiteralPath $healthMarker -ErrorAction SilentlyContinue
+          $env:OPIE_E2E_HEALTH_MARKER = $healthMarker
           $appProcess = Start-Process -FilePath $executable -PassThru
           try {
             foreach ($attempt in 1..30) {
@@ -97,15 +163,27 @@ jobs:
             if ($appProcess.MainWindowTitle -ne 'OPIE MVP') {
               throw "Título inesperado: $($appProcess.MainWindowTitle)"
             }
+            if (-not $appProcess.WaitForExit(30000)) {
+              throw "A aplicação não encerrou normalmente após o health check ponta a ponta."
+            }
+            if ($appProcess.ExitCode -ne 0) {
+              throw "A aplicação encerrou com código $($appProcess.ExitCode)."
+            }
+            $healthResult = Get-Content -LiteralPath $healthMarker -Raw
+            if ($healthResult -ne "UI -> invoke('health_check') -> Rust -> Core OPIE ativo e pronto.") {
+              throw "Evidência IPC inesperada: $healthResult"
+            }
           } finally {
+            Remove-Item Env:\OPIE_E2E_HEALTH_MARKER -ErrorAction SilentlyContinue
             if (-not $appProcess.HasExited) {
               Stop-Process -Id $appProcess.Id
             }
           }
       - name: Preserve Windows artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: opie-mvp-windows
+          if-no-files-found: error
           path: |
             src-tauri/target/release/opie-mvp.exe
             src-tauri/target/release/bundle/**/*
