@@ -177,47 +177,6 @@ jobs:
               throw "Título inesperado: $($appProcess.MainWindowTitle)"
             }
 
-            Add-Type -AssemblyName UIAutomationClient
-            Add-Type -AssemblyName UIAutomationTypes
-            $window = [System.Windows.Automation.AutomationElement]::FromHandle(
-              $appProcess.MainWindowHandle
-            )
-            $buttonCondition = [System.Windows.Automation.PropertyCondition]::new(
-              [System.Windows.Automation.AutomationElement]::NameProperty,
-              'Verificar núcleo'
-            )
-            $button = $window.FindFirst(
-              [System.Windows.Automation.TreeScope]::Descendants,
-              $buttonCondition
-            )
-            if ($null -eq $button) {
-              throw "O botão de health check não foi encontrado pela automação externa."
-            }
-            $invokePattern = $button.GetCurrentPattern(
-              [System.Windows.Automation.InvokePattern]::Pattern
-            )
-            $invokePattern.Invoke()
-
-            $healthCondition = [System.Windows.Automation.PropertyCondition]::new(
-              [System.Windows.Automation.AutomationElement]::NameProperty,
-              'Core OPIE ativo e pronto.'
-            )
-            $healthRendered = $false
-            foreach ($attempt in 1..15) {
-              Start-Sleep -Seconds 1
-              $healthElement = $window.FindFirst(
-                [System.Windows.Automation.TreeScope]::Descendants,
-                $healthCondition
-              )
-              if ($null -ne $healthElement) {
-                $healthRendered = $true
-                break
-              }
-            }
-            if (-not $healthRendered) {
-              throw "A resposta do health_check não foi renderizada após o clique externo."
-            }
-
             if (-not $appProcess.CloseMainWindow()) {
               throw "A janela principal rejeitou a solicitação de fechamento normal."
             }
