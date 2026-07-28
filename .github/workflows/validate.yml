@@ -14,28 +14,6 @@ env:
   RUST_VERSION: '1.88.0'
 
 jobs:
-  lockfile-bootstrap:
-    name: Temporary lockfile bootstrap
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-      - name: Setup Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Pin npm
-        shell: powershell
-        run: npm install --global "npm@$env:NPM_VERSION"
-      - name: Generate exact dependency lock
-        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
-      - name: Preserve generated lock
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: package-lock-002-c
-          if-no-files-found: error
-          path: package-lock.json
-
   frontend:
     name: Frontend build
     runs-on: windows-latest
