@@ -1,0 +1,15 @@
+# MANIFESTO SHA-256 — SPRINT-CODEX-068
+# Repositório: padilhaflavio10-sketch/OPIE-MVP
+# Branch: agent/sprint-codex-068-continuacao-especificacao-tecnica
+# Base da continuidade: bf9abd522b193aa94a86589a2ead9f07730cb946
+# Gerado após publicação e leitura independente dos oito documentos técnicos, antes do commit final deste manifesto.
+# O próprio manifesto não integra sua lista para evitar autorreferência criptográfica impossível.
+
+e61873424fa40d180f8e6a9d0de5ec902011c8e243441fc25473f88989eb0679  docs/technical/SPRINT-CODEX-068-01-AUDITORIA-E-RASTREABILIDADE.md
+20de6cc511e39e267e5bb5052b7f70c3b547763389ce8ef28a333235a16027d7  docs/architecture/SPRINT-CODEX-068-02-ARQUITETURA-DOMINIO-E-DADOS.md
+046cddc0af1ad588cedee07dc41766deae93618a9dc3b485ffb3bcb6976eb524  docs/technical/SPRINT-CODEX-068-03-ESTADOS-INVARIANTES-TRANSACOES.md
+89e26ae5f815fc66c4a5f27bbe2ebba97384673bd6ac948424858d9e76e455e7  docs/technical/SPRINT-CODEX-068-04-OPERACOES-ESTOQUE-PRODUCAO-PEDIDOS-FINANCEIRO.md
+73241c3b905818d87893c786a4b5a10f45eaefa98df32ad3d001c1ca8d1dc13a  docs/technical/SPRINT-CODEX-068-05-SEGURANCA-HISTORICO-E-AUDITORIA.md
+4ea69f2920d631b5ac19c585fc4dbaff189bdb961dbc4dc8dbf19a7e0b1a6989  docs/technical/SPRINT-CODEX-068-06-BACKUP-RESTAURACAO-OFFLINE-E-FALHAS.md
+c64789254eaa380b8f5319f2888bb6e7ae8b9f787dd4da746720f60f20569976  docs/tests/SPRINT-CODEX-068-07-ESTRATEGIA-CASOS-E-PONTA-A-PONTA.md
+e48b45c02a42ec5a62b8aa023df37506294433715d5d72ea987e3265b8d44d1b  docs/risks/SPRINT-CODEX-068-08-PLANO-RISCOS-PENDENCIAS-E-PARECER.md
