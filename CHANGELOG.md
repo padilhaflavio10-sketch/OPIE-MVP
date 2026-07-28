@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-07-28 — SPRINT-CODEX-083
+
+### Governança
+
+- Registrada a aprovação da SPRINT-CODEX-082 pela Sala de Reuniões.
+- Incorporada institucionalmente a regularização documental dos Blocos 1 e 2.
+- Encerrada a pendência documental que suspendia a SPRINT-CODEX-068.
+- Formalizada a reativação da SPRINT-CODEX-068 para continuidade da especificação técnica consultiva.
+- Confirmadas a ausência de alteração funcional, código e implementação.
+- Mantidos o Portão 7 fechado e a proibição de merge na `main` sem autorização.
+
 ## 2026-07-28 — SPRINT-CODEX-082
 
 ### Documentação institucional
