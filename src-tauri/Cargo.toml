@@ -1,6 +1,6 @@
 [package]
 name = "opie-mvp"
-version = "0.1.0"
+version = "0.2.0"
 description = "OPIE MVP"
 authors = ["Flavio Padilha"]
 edition = "2024"
