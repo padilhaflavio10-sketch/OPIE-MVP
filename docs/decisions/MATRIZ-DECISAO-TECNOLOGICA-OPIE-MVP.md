@@ -67,7 +67,7 @@ B supera A por **8 pontos**. Não há empate.
 
 ### A. Tauri 2 + Rust + React/TypeScript + SQLite
 
-Vantagens: baixo consumo, separação forte entre UI e núcleo, segurança de memória, capacidades explícitas e boa aderência ao offline. Riscos: curva de Rust, automação E2E desktop a validar e dependência de WebView2. É a candidata preferencial pelo equilíbrio arquitetural e pela capacidade de manter regras críticas fora da UI.
+Vantagens: baixo consumo, separação forte entre UI e núcleo, segurança de memória, capacidades explícitas e boa aderência ao offline. Riscos: curva de Rust, automação E2E desktop a validar e dependência de WebView2.
 
 ### B. .NET LTS + WinUI 3/WPF + SQLite
 
