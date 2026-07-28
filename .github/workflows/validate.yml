@@ -42,9 +42,9 @@ jobs:
           if (-not (Test-Path package-lock.json -PathType Leaf)) {
             throw "package-lock.json ausente."
           }
-          $lock = Get-Content package-lock.json -Raw | ConvertFrom-Json
-          if ($lock.lockfileVersion -lt 1) {
-            throw "package-lock.json inválido."
+          node -e "const l=require('./package-lock.json');if(l.lockfileVersion<1)process.exit(1)"
+          if ($LASTEXITCODE -ne 0) {
+            throw "package-lock.json inválido ou incompleto."
           }
           npm ci
       - name: Test frontend model
@@ -55,7 +55,6 @@ jobs:
         shell: powershell
         run: |
           $package = Get-Content package.json -Raw | ConvertFrom-Json
-          $packageLock = Get-Content package-lock.json -Raw | ConvertFrom-Json
           $tauri = Get-Content src-tauri/tauri.conf.json -Raw | ConvertFrom-Json
           $cargoToml = Get-Content src-tauri/Cargo.toml -Raw
           $cargoLock = Get-Content src-tauri/Cargo.lock -Raw
@@ -67,10 +66,14 @@ jobs:
             $cargoLock,
             '(?ms)\[\[package\]\]\s+name = "opie-mvp"\s+version = "([^"]+)"'
           ).Groups[1].Value
+          $lockVersions = node -e "const l=require('./package-lock.json');console.log(l.version);console.log(l.packages[''].version)"
+          if ($LASTEXITCODE -ne 0 -or $lockVersions.Count -ne 2) {
+            throw "Não foi possível ler as versões do package-lock.json."
+          }
           $versions = @(
             $package.version,
-            $packageLock.version,
-            $packageLock.packages.''.version,
+            $lockVersions[0],
+            $lockVersions[1],
             $tauri.version,
             $cargoTomlVersion,
             $cargoLockVersion
@@ -112,9 +115,9 @@ jobs:
           if (-not (Test-Path package-lock.json -PathType Leaf)) {
             throw "package-lock.json ausente."
           }
-          $lock = Get-Content package-lock.json -Raw | ConvertFrom-Json
-          if ($lock.lockfileVersion -lt 1) {
-            throw "package-lock.json inválido."
+          node -e "const l=require('./package-lock.json');if(l.lockfileVersion<1)process.exit(1)"
+          if ($LASTEXITCODE -ne 0) {
+            throw "package-lock.json inválido ou incompleto."
           }
           npm ci
           npm run test:model
@@ -225,9 +228,9 @@ jobs:
           if (-not (Test-Path package-lock.json -PathType Leaf)) {
             throw "package-lock.json ausente."
           }
-          $lock = Get-Content package-lock.json -Raw | ConvertFrom-Json
-          if ($lock.lockfileVersion -lt 1) {
-            throw "package-lock.json inválido."
+          node -e "const l=require('./package-lock.json');if(l.lockfileVersion<1)process.exit(1)"
+          if ($LASTEXITCODE -ne 0) {
+            throw "package-lock.json inválido ou incompleto."
           }
           npm ci
       - name: Build Windows application
