@@ -19,7 +19,7 @@ Regras permanentes:
 
 Nome oficial: **OPIE MVP**.
 
-A referência visual oficial está em `docs/architecture/assets/opie-identidade-institucional-referencia.png`. Devem ser preservados exatamente a tipografia desenhada do nome OPIE, suas proporções, composição e combinação institucional de letras em preto/azul.
+A referência visual oficial está em `docs/architecture/assets/opie-identidade-institucional-referencia.jpg`. Devem ser preservados exatamente a tipografia desenhada do nome OPIE, suas proporções, composição e combinação institucional de letras em preto/azul.
 
 A imagem de referência não é mockup obrigatório. Elementos decorativos, disposição da tela de boas-vindas, textos promocionais, ilustrações e módulos nela apresentados são apenas inspiração. Nenhum ativo deve ser redesenhado por aproximação; futura implementação precisa usar arquivo de marca homologado e preservar área de respiro, proporção e contraste.
 
