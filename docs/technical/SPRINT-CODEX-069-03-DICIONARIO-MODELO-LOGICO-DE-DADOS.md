@@ -5,7 +5,7 @@
 
 ## 1. Notação fechada
 
-- Tipos: `ID` (identificador opaco), `TEXT(n)`, `INT`, `BOOL`, `MONEY` (inteiro de centavos), `QTY(18,6)`, `UTC`, `DATE`, `JSON` versionado e `ENUM{...}` fechado.
+- Tipos: `ID` (identificador opaco), `TEXT(n)`, `INT`, `BOOL`, `MONEY` (inteiro de centavos), `QTY(18,6)`, `UTC`, `DATE`, `JSON` versionado e `ENUM{valores_fechados}`.
 - `NN`/`NULL`: nulabilidade; `PK`, `FK`, `UQ`, `CHK`: restrições.
 - `D=x`: valor padrão; `D=—`: sem padrão.
 - Toda FK usa `ON DELETE RESTRICT`; não há cascata destrutiva.
