@@ -6,9 +6,41 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
+  lockfiles:
+    name: Generate lockfiles
+    runs-on: windows-latest
+    steps:
+      - name: Checkout source branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install stable Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.88.0
+      - name: Generate lockfiles
+        run: |
+          npm install
+          cargo generate-lockfile --manifest-path src-tauri/Cargo.toml
+      - name: Commit generated lockfiles
+        shell: bash
+        run: |
+          if git diff --quiet -- package-lock.json src-tauri/Cargo.lock; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json src-tauri/Cargo.lock
+          git commit -m "build: versiona lockfiles do bootstrap"
+          git push origin HEAD:${{ github.head_ref }}
+
   frontend:
     name: Frontend build
     runs-on: windows-latest
