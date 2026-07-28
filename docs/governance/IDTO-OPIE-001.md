@@ -1,3 +1,9 @@
+# IDTO-OPIE-001 v1.1
+
+Documento consolidado a partir da baseline v1.0 publicada. Todo o conteúdo da v1.0 foi preservado. Ao final do inventário foram adicionadas apenas três novas deliberações em atendimento à RTC-001.
+
+## Baseline v1.0 preservada
+
 # IDTO-OPIE-001
 
 ## Inventário de Deliberações Técnicas Obrigatórias
@@ -250,3 +256,16 @@ Este inventário não escolhe tecnologias, não define soluções, não toma dec
 | Coordenação técnica | Mona |
 | Autoridade de aprovação | Sala de Reuniões |
 | Situação | APROVADO E PUBLICADO |
+
+## Complementações da versão 1.1
+
+| ID | Decisão obrigatória | Obrigatória | Situação |
+|---|---|---|---|
+| NFR-001 | Requisitos não funcionais da aplicação | Sim | Pendente de deliberação |
+| PLAT-008 | Requisitos mínimos de hardware do ambiente operacional | Sim | Pendente de deliberação |
+| DB-013 | Política de concorrência, múltiplas instâncias e acesso simultâneo ao banco local | Sim | Pendente de deliberação |
+
+## Histórico de versões
+
+- v1.0: baseline publicada.
+- v1.1: preserva integralmente a v1.0 e acrescenta NFR-001, PLAT-008 e DB-013, sem renumerar os identificadores existentes.
