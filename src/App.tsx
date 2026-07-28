@@ -18,6 +18,7 @@ const sections: Array<{ id: Section; label: string }> = [
 
 export default function App() {
   const [section, setSection] = useState<Section>('inicio');
+  const [navigationAnnouncement, setNavigationAnnouncement] = useState('');
   const [coreStatus, setCoreStatus] = useState(initialCoreStatus);
   const checkInProgress = useRef(false);
 
@@ -41,18 +42,25 @@ export default function App() {
 
   function navegar(nextSection: Section) {
     setSection((current) => selectSection(current, nextSection));
+    const label = sections.find((item) => item.id === nextSection)?.label ?? nextSection;
+    setNavigationAnnouncement(`Seção ${label} selecionada.`);
   }
 
   return (
     <div className="app-shell">
       <header className="topbar">
-        <a className="brand" href="#inicio" onClick={() => navegar('inicio')}>
+        <button
+          className="brand"
+          type="button"
+          aria-label="Ir para o início"
+          onClick={() => navegar('inicio')}
+        >
           <span className="brand-mark" aria-hidden="true">O</span>
           <span>
             <strong>OPIE</strong>
             <small>Ambiente de Exploração</small>
           </span>
-        </a>
+        </button>
 
         <nav aria-label="Navegação principal">
           {sections.map((item) => (
@@ -70,6 +78,10 @@ export default function App() {
 
         <span className="version-chip">v{__APP_VERSION__}</span>
       </header>
+
+      <p className="sr-only" aria-live="polite" aria-atomic="true">
+        {navigationAnnouncement}
+      </p>
 
       <main id="conteudo" className="content" tabIndex={-1}>
         {section === 'inicio' && (

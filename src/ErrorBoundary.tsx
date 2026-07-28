@@ -31,9 +31,9 @@ export default class ErrorBoundary extends Component<Props, State> {
         <main className="recovery" role="alert">
           <span className="eyebrow">OPIE</span>
           <h1>Não foi possível exibir esta área.</h1>
-          <p>O estado da interface pode ser restaurado com segurança.</p>
+          <p>Você pode tentar carregar novamente o estado inicial da interface.</p>
           <button className="primary-action" type="button" onClick={this.recover}>
-            Retornar ao início
+            Tentar retornar ao início
           </button>
         </main>
       );

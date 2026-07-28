@@ -14,6 +14,28 @@ env:
   RUST_VERSION: '1.88.0'
 
 jobs:
+  lockfile-bootstrap:
+    name: Temporary lockfile bootstrap
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Pin npm
+        shell: powershell
+        run: npm install --global "npm@$env:NPM_VERSION"
+      - name: Generate exact dependency lock
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Preserve generated lock
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: package-lock-002-c
+          if-no-files-found: error
+          path: package-lock.json
+
   frontend:
     name: Frontend build
     runs-on: windows-latest
@@ -38,8 +60,40 @@ jobs:
           }
       - name: Install dependencies
         run: npm ci
-      - name: Test frontend state and navigation
-        run: npm test
+      - name: Test frontend model
+        run: npm run test:model
+      - name: Test React components
+        run: npm run test:component
+      - name: Verify synchronized application versions
+        shell: powershell
+        run: |
+          $package = Get-Content package.json -Raw | ConvertFrom-Json
+          $packageLock = Get-Content package-lock.json -Raw | ConvertFrom-Json
+          $tauri = Get-Content src-tauri/tauri.conf.json -Raw | ConvertFrom-Json
+          $cargoToml = Get-Content src-tauri/Cargo.toml -Raw
+          $cargoLock = Get-Content src-tauri/Cargo.lock -Raw
+          $cargoTomlVersion = [regex]::Match(
+            $cargoToml,
+            '(?m)^version = "([^"]+)"'
+          ).Groups[1].Value
+          $cargoLockVersion = [regex]::Match(
+            $cargoLock,
+            '(?ms)\[\[package\]\]\s+name = "opie-mvp"\s+version = "([^"]+)"'
+          ).Groups[1].Value
+          $versions = @(
+            $package.version,
+            $packageLock.version,
+            $packageLock.packages.''.version,
+            $tauri.version,
+            $cargoTomlVersion,
+            $cargoLockVersion
+          )
+          if ($versions -contains '') {
+            throw "Uma ou mais versões não puderam ser lidas."
+          }
+          if (($versions | Select-Object -Unique).Count -ne 1) {
+            throw "Versões divergentes: $($versions -join ', ')"
+          }
       - name: Build frontend
         run: npm run build
 
@@ -68,7 +122,8 @@ jobs:
       - name: Build frontend for Tauri context
         run: |
           npm ci
-          npm test
+          npm run test:model
+          npm run test:component
           npm run build
       - name: Install stable Rust
         uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # commit 2026-07-16; Rust 1.88.0
@@ -95,9 +150,10 @@ jobs:
       - name: Test Rust backend
         working-directory: src-tauri
         run: cargo test --locked
-      - name: Audit production sources
+      - name: Guard known rejected signatures and Tauri surface
         shell: powershell
         run: |
+          # Este guard detecta assinaturas conhecidas; não constitui prova semântica completa.
           $forbidden = @(
             'confirm_health_check_e2e',
             'OPIE_E2E_HEALTH_MARKER',
@@ -110,6 +166,21 @@ jobs:
             if ($matches) {
               throw "Termo proibido encontrado no código de produção: $term"
             }
+          }
+          $mainSource = Get-Content src-tauri/src/main.rs -Raw
+          $handler = [regex]::Match(
+            $mainSource,
+            'generate_handler!\[([^\]]*)\]'
+          ).Groups[1].Value -replace '\s', ''
+          if ($handler -ne 'health_check') {
+            throw "Superfície Tauri inesperada no handler: $handler"
+          }
+          $capabilities = @(Get-ChildItem src-tauri/capabilities -File -Filter '*.json')
+          if ($capabilities.Count -ne 1 -or $capabilities[0].Name -ne 'default.json') {
+            throw "Arquivos de capability inesperados."
+          }
+          if (Select-String -Path src-tauri/Cargo.toml -Pattern 'tauri-plugin-') {
+            throw "Plugin Tauri não autorizado encontrado."
           }
 
   windows-bundle:
