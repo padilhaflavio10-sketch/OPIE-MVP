@@ -9,3 +9,13 @@ fn main() {
         .run(tauri::generate_context!())
         .expect("falha ao executar o OPIE MVP");
 }
+
+#[cfg(test)]
+mod tests {
+    use super::health_check;
+
+    #[test]
+    fn health_check_confirma_core_ativo() {
+        assert_eq!(health_check(), "Core OPIE ativo e pronto.");
+    }
+}

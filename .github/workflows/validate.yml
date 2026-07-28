@@ -21,13 +21,13 @@ jobs:
           node-version: '24'
       - name: Install dependencies
         run: npm install
-      - name: Build frontend
-        run: npm run build
       - name: Preserve npm lockfile
         uses: actions/upload-artifact@v4
         with:
           name: package-lock
           path: package-lock.json
+      - name: Build frontend
+        run: npm run build
 
   rust:
     name: Rust check
@@ -43,6 +43,14 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri
+      - name: Generate Cargo lockfile
+        working-directory: src-tauri
+        run: cargo generate-lockfile
+      - name: Preserve Cargo lockfile
+        uses: actions/upload-artifact@v4
+        with:
+          name: cargo-lock
+          path: src-tauri/Cargo.lock
       - name: Check Rust backend
         working-directory: src-tauri
         run: cargo check
