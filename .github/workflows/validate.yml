@@ -6,41 +6,9 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  lockfiles:
-    name: Generate lockfiles
-    runs-on: windows-latest
-    steps:
-      - name: Checkout source branch
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-      - name: Install stable Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: 1.88.0
-      - name: Generate lockfiles
-        run: |
-          npm install
-          cargo generate-lockfile --manifest-path src-tauri/Cargo.toml
-      - name: Commit generated lockfiles
-        shell: bash
-        run: |
-          if [ -z "$(git status --porcelain -- package-lock.json src-tauri/Cargo.lock)" ]; then
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package-lock.json src-tauri/Cargo.lock
-          git commit -m "build: versiona lockfiles do bootstrap"
-          git push origin HEAD:${{ github.head_ref }}
-
   frontend:
     name: Frontend build
     runs-on: windows-latest
@@ -52,12 +20,7 @@ jobs:
         with:
           node-version: '24'
       - name: Install dependencies
-        run: npm install
-      - name: Preserve npm lockfile
-        uses: actions/upload-artifact@v4
-        with:
-          name: package-lock
-          path: package-lock.json
+        run: npm ci
       - name: Build frontend
         run: npm run build
 
@@ -75,17 +38,12 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri
-      - name: Generate Cargo lockfile
-        working-directory: src-tauri
-        run: cargo generate-lockfile
-      - name: Preserve Cargo lockfile
-        uses: actions/upload-artifact@v4
-        with:
-          name: cargo-lock
-          path: src-tauri/Cargo.lock
       - name: Check Rust backend
         working-directory: src-tauri
-        run: cargo check
+        run: cargo check --locked
+      - name: Test Rust backend
+        working-directory: src-tauri
+        run: cargo test --locked
 
   windows-bundle:
     name: Windows bundle
@@ -106,7 +64,7 @@ jobs:
         with:
           workspaces: src-tauri
       - name: Install dependencies
-        run: npm install
+        run: npm ci
       - name: Build Windows application
         run: npm run tauri build
       - name: Preserve Windows artifacts
