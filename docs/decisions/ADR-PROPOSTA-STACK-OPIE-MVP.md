@@ -20,23 +20,22 @@ O OPIE MVP precisa de uma stack formal para uma aplicação desktop Windows, loc
 - distribuição e assinatura no Windows;
 - manutenção sustentável.
 
-## Proposta
+## Proposta corrigida para deliberação
 
-Adotar, somente após homologação e prova técnica:
+A matriz corrigida posiciona como primeira colocada a Alternativa B:
 
-- Tauri 2 como shell desktop;
-- Rust stable para núcleo, casos de uso e infraestrutura;
-- React 19.2 estável com TypeScript 6.0 estável para apresentação;
-- SQLite 3.53.x estável com acesso SQL explícito via rusqlite;
-- GitHub Actions em Windows para validação e empacotamento.
+- .NET em versão LTS;
+- WinUI 3 ou WPF, escolha ainda pendente;
+- SQLite;
+- ferramentas de build, teste e distribuição Windows a definir após homologação.
 
-Versões exatas devem ser fixadas após a prova técnica. Dependências transitivas devem permanecer em lockfile. Nenhum elemento desta seção está aprovado enquanto o status continuar “Proposto”.
+A Alternativa B obteve 454 pontos (90,8%), oito pontos acima da Alternativa A. Por isso, B deve ser submetida primeiro à deliberação. Versões exatas, a escolha entre WinUI 3 e WPF e qualquer prova técnica permanecem pendentes. Nenhum elemento desta seção está aprovado enquanto o status continuar “Proposto”.
 
-## Alternativa de contingência
+## Segunda alternativa
 
-.NET em versão LTS, com WinUI 3 ou WPF e SQLite. A escolha entre WinUI e WPF também exigirá decisão documentada. Essa alternativa deve ser ativada se a prova técnica apontar bloqueio material em empacotamento, testes E2E, acessibilidade, competência de manutenção ou integração Windows da candidata principal.
+Tauri 2 + Rust + React/TypeScript + SQLite permanece como Alternativa A, segunda colocada com 446 pontos (89,2%). Seu detalhamento técnico anterior é preservado como insumo comparativo, não como decisão. A diferença de oito pontos não autoriza escolha automática de qualquer stack.
 
-## Consequências esperadas
+## Consequências esperadas da Alternativa A anteriormente detalhada
 
 Positivas:
 
@@ -54,7 +53,7 @@ Negativas:
 - maior esforço inicial de automação desktop;
 - necessidade de disciplina para impedir regras de negócio na UI.
 
-## Restrições arquiteturais propostas
+## Restrições arquiteturais anteriormente propostas para a Alternativa A
 
 - UI não acessa banco, filesystem ou segredos diretamente.
 - Toda operação privilegiada passa por comando tipado e capacidade mínima.
@@ -64,9 +63,9 @@ Negativas:
 - Atualização e backup exigem assinatura/verificação e estratégia de rollback.
 - Nenhuma decisão funcional pode ser criada na implementação.
 
-## Critérios da prova técnica futura
+## Critérios de eventual prova técnica futura
 
-A prova, se autorizada, deverá demonstrar sem implementar negócio:
+A prova, se autorizada e ajustada à alternativa que vier a ser homologada, deverá demonstrar sem implementar negócio:
 
 1. build limpo em Windows;
 2. instalador assinado em ambiente de teste;

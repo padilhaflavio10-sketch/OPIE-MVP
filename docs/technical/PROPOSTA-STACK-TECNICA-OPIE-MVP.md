@@ -9,7 +9,7 @@ A proposta considera a baseline funcional e técnica vigente: aplicação deskto
 
 Versões abaixo são faixas recomendadas para homologação. Antes de implementar, devem ser fixadas em lockfiles e confirmadas em uma prova técnica autorizada.
 
-## 2. Stack candidata preferencial
+## 2. Alternativa A detalhada na proposta original
 
 | Camada | Tecnologia candidata | Faixa recomendada | Justificativa |
 |---|---|---:|---|
@@ -135,6 +135,8 @@ Antes de implementar devem ser homologados:
 - SQLite — Online Backup API: https://www.sqlite.org/backup.html
 - SQLite — VACUUM INTO: https://www.sqlite.org/lang_vacuum.html
 
-## 13. Parecer propositivo
+## 13. Parecer propositivo corrigido
 
-A combinação Tauri 2 + Rust + React/TypeScript + SQLite é a candidata preferencial, condicionada a prova técnica e homologação. Este parecer não aprova tecnologia nem autoriza qualquer implementação.
+A matriz corrigida atribui a maior pontuação à Alternativa B (.NET LTS + WinUI 3 ou WPF + SQLite), com 454 pontos (90,8%), seguida pela Alternativa A (Tauri 2 + Rust + React/TypeScript + SQLite), com 446 pontos (89,2%). Assim, B deve ser submetida como primeira alternativa à deliberação e A permanece como segunda alternativa tecnicamente viável.
+
+O detalhamento anterior da Alternativa A é preservado para rastreabilidade e comparação; ele não prevalece sobre o ranking corrigido. A escolha entre WinUI 3 e WPF, as versões exatas e uma eventual prova técnica continuam pendentes. Este parecer é consultivo, aguarda auditoria e homologação e não aprova tecnologia nem autoriza implementação.

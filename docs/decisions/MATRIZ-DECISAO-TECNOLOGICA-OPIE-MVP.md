@@ -40,10 +40,30 @@ D. Flutter Desktop + Dart + SQLite
 | Ecossistema | 8 | 4 | 5 | 5 | 4 |
 | Aprendizagem | 6 | 2 | 4 | 5 | 3 |
 | Portabilidade | 4 | 4 | 2 | 5 | 5 |
-| **Total ponderado / 500** | **100** | **458** | **458** | **382** | **388** |
-| **Percentual** |  | **91,6%** | **91,6%** | **76,4%** | **77,6%** |
+| **Total ponderado / 500** | **100** | **446** | **454** | **388** | **384** |
+| **Percentual** |  | **89,2%** | **90,8%** | **77,6%** | **76,8%** |
 
-## 4. Análise qualitativa
+## 4. Demonstração dos cálculos
+
+Cada parcela corresponde a peso × nota, sem alteração de pesos ou notas:
+
+- A = (18×5) + (16×5) + (14×4) + (12×5) + (12×5) + (10×4) + (8×4) + (6×2) + (4×4) = 90 + 80 + 56 + 60 + 60 + 40 + 32 + 12 + 16 = **446**; 446 ÷ 500 × 100 = **89,2%**.
+- B = (18×5) + (16×4) + (14×5) + (12×4) + (12×5) + (10×5) + (8×5) + (6×4) + (4×2) = 90 + 64 + 70 + 48 + 60 + 50 + 40 + 24 + 8 = **454**; 454 ÷ 500 × 100 = **90,8%**.
+- C = (18×4) + (16×3) + (14×4) + (12×2) + (12×4) + (10×5) + (8×5) + (6×5) + (4×5) = 72 + 48 + 56 + 24 + 48 + 50 + 40 + 30 + 20 = **388**; 388 ÷ 500 × 100 = **77,6%**.
+- D = (18×4) + (16×4) + (14×3) + (12×4) + (12×4) + (10×4) + (8×4) + (6×3) + (4×5) = 72 + 64 + 42 + 48 + 48 + 40 + 32 + 18 + 20 = **384**; 384 ÷ 500 × 100 = **76,8%**.
+
+A soma dos pesos é 100 e a pontuação máxima é 500.
+
+## 5. Ranking final
+
+1. Alternativa B — **454 pontos (90,8%)**
+2. Alternativa A — **446 pontos (89,2%)**
+3. Alternativa C — **388 pontos (77,6%)**
+4. Alternativa D — **384 pontos (76,8%)**
+
+B supera A por **8 pontos**. Não há empate.
+
+## 6. Análise qualitativa
 
 ### A. Tauri 2 + Rust + React/TypeScript + SQLite
 
@@ -51,7 +71,7 @@ Vantagens: baixo consumo, separação forte entre UI e núcleo, segurança de me
 
 ### B. .NET LTS + WinUI 3/WPF + SQLite
 
-Vantagens: integração Windows superior, ferramentas maduras, testes sólidos e equipe potencialmente mais fácil de formar. Riscos: menor portabilidade e decisão adicional entre WinUI 3 e WPF. Empata quantitativamente e é a alternativa de contingência recomendada, especialmente se a prova técnica revelar custo excessivo de Rust/Tauri.
+Vantagens: integração Windows superior, ferramentas maduras, testes sólidos e equipe potencialmente mais fácil de formar. Riscos: menor portabilidade e decisão adicional entre WinUI 3 e WPF. Obtém a maior pontuação quantitativa e deve ser a primeira alternativa submetida à deliberação, sem que isso constitua homologação.
 
 ### C. Electron + React/TypeScript + SQLite
 
@@ -61,17 +81,17 @@ Vantagens: ampla maturidade, contratação mais simples, automação e ecossiste
 
 Vantagens: UI consistente, desempenho adequado e portabilidade. Riscos: menor integração Windows, ecossistema desktop mais estreito para necessidades administrativas locais e adoção de linguagem adicional sem benefício decisivo para o cenário atual.
 
-## 5. Sensibilidade
+## 7. Sensibilidade
 
-O empate entre A e B é relevante. A preferência por A depende de:
+A diferença de 8 pontos entre B e A é pequena diante da natureza qualitativa das notas. A manutenção de A como alternativa tecnicamente viável depende de:
 
 - comprovar empacotamento, assinatura e atualização no ambiente Windows;
 - validar E2E e acessibilidade da UI Tauri;
 - demonstrar que a equipe consegue manter Rust;
 - comprovar backup/restauração e migrações com SQLite.
 
-Se qualquer condição falhar de forma bloqueante, B deve ser reavaliada antes de considerar C ou D. A matriz não autoriza escolha automática.
+Se qualquer condição falhar de forma bloqueante, B permanece a primeira alternativa para aprofundamento antes de considerar C ou D. A matriz não autoriza escolha automática nem homologação.
 
-## 6. Recomendação
+## 8. Recomendação
 
-Submeter A como candidata principal e B como contingência obrigatória a uma prova técnica curta, documentalmente autorizada. A decisão final pertence à Sala de Reuniões.
+Submeter B, por possuir a maior pontuação (454), como primeira alternativa à deliberação, mantendo A como segunda colocada e alternativa técnica comparável. Qualquer prova técnica depende de autorização documental específica. A recomendação é consultiva, permanece pendente de auditoria e homologação e não autoriza implementação. A decisão final pertence à Sala de Reuniões.
