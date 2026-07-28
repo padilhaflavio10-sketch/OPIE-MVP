@@ -75,6 +75,33 @@ jobs:
         run: npm ci
       - name: Build Windows application
         run: npm run tauri build
+      - name: Smoke test Windows application
+        shell: powershell
+        run: |
+          $executable = Join-Path $PWD 'src-tauri\target\release\opie-mvp.exe'
+          $appProcess = Start-Process -FilePath $executable -PassThru
+          try {
+            foreach ($attempt in 1..30) {
+              Start-Sleep -Seconds 1
+              $appProcess.Refresh()
+              if ($appProcess.HasExited) {
+                throw "A aplicação encerrou antes de criar a janela principal."
+              }
+              if ($appProcess.MainWindowHandle -ne 0) {
+                break
+              }
+            }
+            if ($appProcess.MainWindowHandle -eq 0) {
+              throw "A janela principal não foi criada no prazo esperado."
+            }
+            if ($appProcess.MainWindowTitle -ne 'OPIE MVP') {
+              throw "Título inesperado: $($appProcess.MainWindowTitle)"
+            }
+          } finally {
+            if (-not $appProcess.HasExited) {
+              Stop-Process -Id $appProcess.Id
+            }
+          }
       - name: Preserve Windows artifacts
         uses: actions/upload-artifact@v4
         with:
