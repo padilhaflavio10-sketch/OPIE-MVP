@@ -32,7 +32,7 @@ jobs:
       - name: Commit generated lockfiles
         shell: bash
         run: |
-          if git diff --quiet -- package-lock.json src-tauri/Cargo.lock; then
+          if [ -z "$(git status --porcelain -- package-lock.json src-tauri/Cargo.lock)" ]; then
             exit 0
           fi
           git config user.name "github-actions[bot]"
